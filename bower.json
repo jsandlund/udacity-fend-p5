@@ -1,0 +1,24 @@
+{
+  "name": "nopa-explorer-js",
+  "authors": [
+    "Jonathan Sandlund <contact@jsandlund.com>"
+  ],
+  "description": "udacity front end engineering project",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "underscore": "~1.8.3",
+    "bootstrap": "~3.3.5",
+    "jquery": "~2.1.4"
+  }
+}
