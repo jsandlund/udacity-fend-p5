@@ -247,6 +247,4 @@ function getFoursquareData(fousquare_venue_id) {
   })
 }
 
-
-
 ko.applyBindings(new ViewModel(model.buildMap(), model.locations));
