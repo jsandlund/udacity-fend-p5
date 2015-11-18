@@ -1,4 +1,43 @@
 var model = {
+  locations: [
+    {
+      name: "Matching Half Cafe",
+      category: "Coffee",
+      address: "1799 McAllister St, San Francisco, CA 94117",
+      latLng: {lat: 37.777094, lng: -122.441613},
+      yelp: {
+        id: "matching-half-cafe-san-francisco-3"
+      },
+      foursquare: {
+        venue_id: '4aea176df964a52047b921e3'
+      }
+    },
+    {
+      name: "Flywheel Coffee Roasters",
+      category: "Coffee",
+      address: "672 Stanyan St, San Francisco, CA 94117",
+      latLng: {lat: 37.769726, lng: -122.453318},
+      yelp: {
+        id: "flywheel-coffee-roasters-san-francisco"
+      },
+      foursquare: {
+        venue_id: '4f934157e4b0ab5f09ebb8fc'
+      }
+    },
+    {
+      name: "Madrone Art Bar",
+      category: "Bar",
+      address: "500 Divisadero St, San Francisco, CA 94117",
+      latLng: {lat: 37.774234, lng: -122.437312},
+      yelp: {
+        id: "madrone-art-bar-san-francisco"
+      },
+      foursquare: {
+        venue_id: '43598100f964a520f7281fe3'
+      }
+    }
+  ],
+
   buildMap: function(){
     var map = new google.maps.Map(document.getElementById('map-canvas'), {
       center: model.mapStartLatLng,
@@ -9,37 +48,8 @@ var model = {
 
     return map;
   },
-  mapStartLatLng: {lat: 37.775961, lng: -122.445178},
 
-  locations: [
-    {
-      name: "Matching Half Cafe",
-      category: "Coffee",
-      address: "1799 McAllister St, San Francisco, CA 94117",
-      latLng: {lat: 37.777094, lng: -122.441613},
-      yelp: {
-        id: "matching-half-café-san-francisco-3"
-      }
-    },
-    {
-      name: "Flywheel Coffee Roasters",
-      category: "Coffee",
-      address: "672 Stanyan St, San Francisco, CA 94117",
-      latLng: {lat: 37.769726, lng: -122.453318},
-      yelp: {
-        id: "flywheel-coffee-roasters-san-francisco"
-      }
-    },
-    {
-      name: "Madrone Art Bar",
-      category: "Bar",
-      address: "500 Divisadero St, San Francisco, CA 94117",
-      latLng: {lat: 37.774234, lng: -122.437312},
-      yelp: {
-        id: "madrone-art-bar-san-francisco"
-      }
-    }
-  ]
+  mapStartLatLng: {lat: 37.775961, lng: -122.445178}
 
 }
 
@@ -138,8 +148,14 @@ var Pin = function (map, name, latLng) {
 
     // Get clicked location object from model
     var clickedLocationObj = getLocationByName(this.title);
+
+    console.log(clickedLocationObj.yelp.id)
+
     // Trigger Yelp API call for clickedLocation
-    getYelpData(clickedLocationObj.yelp.id);
+    // var yelpData = getYelpData(clickedLocationObj.yelp.id);
+
+    // Trigger Foursquare API call for clickedLocation
+    var foursquareData = getFoursquareData(clickedLocationObj.foursquare.venue_id);
 
     // Animate marker
     animateMarker(this);
@@ -170,15 +186,19 @@ function getLocationByName(locationName) {
   return locations[0];
 }
 
+var businessID = "madrone-art-bar-san-francisco";
+
 function getYelpData(yelpBusinessId){
 
-  var url = API.YELP.CONTEXT.BASE_URL + yelpBusinessId,
-      params = API.YELP.AUTH_PUBLIC,
-      consumer_secret = API.YELP.AUTH_SECRET.consumer_secret,
-      token_secret = API.YELP.AUTH_SECRET.token_secret,
-      oauth_nonce = nonce_generate(),
-      oauth_timestamp = Math.floor(Date.now()/1000),
-      oauth_options = { encodeSignature: false };
+   var data;
+
+   var url = API.YELP.CONTEXT.BASE_URL + yelpBusinessId;
+   var params = API.YELP.AUTH_PUBLIC;
+   var consumer_secret = API.YELP.AUTH_SECRET.consumer_secret;
+   var token_secret = API.YELP.AUTH_SECRET.token_secret;
+   var oauth_nonce = nonce_generate();
+   var oauth_timestamp = Math.floor(Date.now()/1000);
+   var oauth_options = { encodeSignature: false };
 
   // Add run time oauth properties to params object
   params.oauth_nonce = oauth_nonce;
@@ -186,6 +206,9 @@ function getYelpData(yelpBusinessId){
 
   // Generate oauthSignature / add to params object
   var signature = oauthSignature.generate('GET', url, params, consumer_secret, token_secret, oauth_options);
+
+  console.log("signature", signature)
+  console.log("params", params)
 
   // Add signature to params objects
   params.oauth_signature = signature;
@@ -196,14 +219,34 @@ function getYelpData(yelpBusinessId){
     data: params,
     cache: true,
     dataType: 'jsonp',
-    success: function(results) {
-      console.log("yelp results", results);
-    },
-    error: function() {
-      console.log("ERROR!")
-    }
+  }).done(function(results) {
+    console.log(results);
+    console.log("url", this.url);
+  }).fail(function(m){
+    console.log("ERROR!", m)
   })
 
 };
+
+function getFoursquareData(fousquare_venue_id) {
+  var url = API.FOURSQUARE.CONTEXT.BASE_URL + fousquare_venue_id,
+      params = {
+        client_id: API.FOURSQUARE.AUTH_PUBLIC.CLIENT_ID,
+        client_secret: API.FOURSQUARE.AUTH_SECRET.CLIENT_SECRET,
+        v: new Date().toISOString().slice(0,10).replace(/-/g, "")
+      };
+
+  $.ajax({
+    url: url,
+    data: params
+  }).done(function(results) {
+    var venue = results.response.venue;
+    console.log(venue);
+  }).fail(function(m){
+    console.log("ERROR!", m)
+  })
+}
+
+
 
 ko.applyBindings(new ViewModel(model.buildMap(), model.locations));

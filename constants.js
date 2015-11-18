@@ -21,10 +21,25 @@ var API = {
       token_secret: 'EotHsoy5UPorAks8Mlw-UTLJjAw'
     },
     CONTEXT: {
-      BASE_URL: "https://api.yelp.com/v2/business/"
+      BASE_URL: 'https://api.yelp.com/v2/business/'
+    }
+  },
+
+  FOURSQUARE: {
+    AUTH_SECRET: {
+      CLIENT_SECRET: 'ELYTAJTSDKP3T1UTA22LMFBAUTPE2BPTBSGKE2CNL1HOWF1K'
+    },
+    AUTH_PUBLIC: {
+      CLIENT_ID: '2UDRFTT4KL1F42GTXEJ4DJCNUJMC3O5ZTUYJNQ4LVH4EMPLK'
+    },
+    CONTEXT: {
+      BASE_URL: 'https://api.foursquare.com/v2/venues/',
+      NEAR: 'San Francisco, CA'
     }
   }
 
 }
-// // var yelp_url = YELP_BASE_URL + 'business/' + self.selected_place().Yelp.business_id;
-// // notice how this uses self an observable value.
+
+// Foursquare
+// Some of our endpoints that don’t pertain to specific user information, such as venues search are enabled for userless access (meaning you don’t need to have a user auth your app for access). To make a userless request, specify your consumer key's Client ID and Secret instead of an auth token in the request URL.
+// https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=CLIENT_ID&client_secret=CLIENT_SECRET&v=YYYYMMDD
