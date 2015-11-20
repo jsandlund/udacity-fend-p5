@@ -13,8 +13,7 @@ var API = {
     AUTH_PUBLIC: {
       oauth_consumer_key : 'WjN69d5DhJDQOOEgPfb3oQ',
       oauth_token : 'eAqQ1_X4GERAPMhHnoZFKrfxBkXrkidG',
-      oauth_signature_method : 'HMAC-SHA1',
-      callback: 'cb'
+      oauth_signature_method : 'HMAC-SHA1'
     },
     AUTH_SECRET: {
       consumer_secret: 'T96VnXNd984UnwZUMljKPw93Y7I',
@@ -39,7 +38,3 @@ var API = {
   }
 
 }
-
-// Foursquare
-// Some of our endpoints that don’t pertain to specific user information, such as venues search are enabled for userless access (meaning you don’t need to have a user auth your app for access). To make a userless request, specify your consumer key's Client ID and Secret instead of an auth token in the request URL.
-// https://api.foursquare.com/v2/venues/search?ll=40.7,-74&client_id=CLIENT_ID&client_secret=CLIENT_SECRET&v=YYYYMMDD

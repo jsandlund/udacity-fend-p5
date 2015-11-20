@@ -22,6 +22,8 @@
   </head>
 
   <body>
+    <!-- Map Rendered Here -->
+    <div id="map-canvas"></div>
 
     <div class="container-fluid">
       <div class="row">
@@ -55,12 +57,23 @@
 
         <!-- Map rendered here -->
         <div class="col-md-9 col-md-offset-3 main">
-          <div id="map-canvas"></div>
+
+          <div id="locationBox">
+            <p> Test </p>
+          </div>
         </div>
 
-        <div class="hide infobox-wrapper">
-          <div id="infobox1">
-              <p>Infobox is very easy to customize because, well, it's your code.</p>
+        <!-- Infoboxes Template HTML -->
+        <div class="hide" id="infoboxes-container" data-bind="foreach: pins">
+          <div class="infobox" data-bind="attr: {id: nameId}">
+              <h1 id="co-name" data-bind="text: name"></h1>
+              <hr>
+              <ul>
+                <li> Yelp Stars: 4.5 </li>
+                <li> Yelp Reviews: 500 </li>
+                <li> Foursquare Stars: 4.0 </li>
+                <li> Foursquare Reviews: 200 </li>
+              </ul>
           </div>
         </div>
 

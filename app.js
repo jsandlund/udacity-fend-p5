@@ -89,10 +89,13 @@ var ViewModel = function(map, locations){
 var prev_infowindow = false;
 
 // Pin constructor function
+
 var Pin = function (map, name, latLng) {
+  var self = this;
   var marker;
 
   this.name = ko.observable(name);
+  this.nameId = this.name().replace(/\s+/g, '-').toLowerCase();
   this.latLng = latLng;
   this.isVisible = ko.observable(false);
   this.isSelected = ko.observable(false);
@@ -117,13 +120,16 @@ var Pin = function (map, name, latLng) {
     }
   });
 
+  this.toggleSelected = function(){
+    console.log("toggle selected");
+    this.isSelected(!this.isSelected());
+  }
+
   // Listen to changes of isSelected property; on change open infowindow
   this.isSelected.subscribe(function(currentState){
     console.log("prev_infowindow", prev_infowindow)
     console.log("currentState", currentState);
-    if (prev_infowindow) {
-      prev_infowindow.close();
-    }
+
     if(currentState){
       marker['infowindow'].open(map, marker);
     }
@@ -133,23 +139,26 @@ var Pin = function (map, name, latLng) {
   // make marker visible by default
   this.isVisible(true);
 
-  // Attach infowindow property to marker object
-  marker['infowindow'] = new google.maps.InfoWindow({
-    content: document.getElementById("infobox1")
-  });
-
   // On click of marker
     // Check if an infowindow is already open; if so, close it.
     // Open infowindow property, which is binded to the marker object
   marker.addListener("click", function(){
+
+    if(!this['infowindow']) {
+      // Attach infowindow property to marker object
+      this['infowindow'] = new google.maps.InfoWindow({
+        content: document.getElementById(self.nameId)
+      });
+    }
+
+
     if (prev_infowindow) {
       prev_infowindow.close();
     }
 
     // Get clicked location object from model
     var clickedLocationObj = getLocationByName(this.title);
-
-    console.log(clickedLocationObj.yelp.id)
+    console.log("marker object", this)
 
     // Trigger Yelp API call for clickedLocation
     // var yelpData = getYelpData(clickedLocationObj.yelp.id);
@@ -190,25 +199,19 @@ var businessID = "madrone-art-bar-san-francisco";
 
 function getYelpData(yelpBusinessId){
 
-   var data;
-
    var url = API.YELP.CONTEXT.BASE_URL + yelpBusinessId;
    var params = API.YELP.AUTH_PUBLIC;
    var consumer_secret = API.YELP.AUTH_SECRET.consumer_secret;
    var token_secret = API.YELP.AUTH_SECRET.token_secret;
-   var oauth_nonce = nonce_generate();
-   var oauth_timestamp = Math.floor(Date.now()/1000);
    var oauth_options = { encodeSignature: false };
 
   // Add run time oauth properties to params object
-  params.oauth_nonce = oauth_nonce;
-  params.oauth_timestamp = oauth_timestamp;
+  params.oauth_nonce = nonce_generate();
+  params.oauth_timestamp = Math.floor(Date.now()/1000);
+  params.callback = 'cb'
 
   // Generate oauthSignature / add to params object
   var signature = oauthSignature.generate('GET', url, params, consumer_secret, token_secret, oauth_options);
-
-  console.log("signature", signature)
-  console.log("params", params)
 
   // Add signature to params objects
   params.oauth_signature = signature;

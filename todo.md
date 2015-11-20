@@ -21,3 +21,6 @@
 
 # Add News API
   - Show "In the news"
+
+# Add slideout
+  - http://ironsummitmedia.github.io/startbootstrap-simple-sidebar/
