@@ -63,20 +63,6 @@
           </div>
         </div>
 
-        <!-- Infoboxes Template HTML -->
-        <div class="hide" id="infoboxes-container" data-bind="foreach: pins">
-          <div class="infobox" data-bind="attr: {id: nameId}">
-              <h1 id="co-name" data-bind="text: name"></h1>
-              <hr>
-              <ul>
-                <li> Yelp Stars: 4.5 </li>
-                <li> Yelp Reviews: 500 </li>
-                <li> Foursquare Stars: 4.0 </li>
-                <li> Foursquare Reviews: 200 </li>
-              </ul>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -87,7 +73,8 @@
     <script src="bower_components/knockout/dist/knockout.js"></script>
     <script src="bower_components/oauth-signature/dist/oauth-signature.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArYqgfXQNcM6DHNmunrVpS8hGoa0IaIgk&signed_in=true"></script>
-    <script src="constants.js"></script>
+    <script src="model.js"></script>
+    <script src="controller.js"></script>
     <script src="app.js"></script>
 
   </body>

@@ -1,74 +1,17 @@
-var model = {
-  locations: [
-    {
-      name: "Matching Half Cafe",
-      category: "Coffee",
-      address: "1799 McAllister St, San Francisco, CA 94117",
-      latLng: {lat: 37.777094, lng: -122.441613},
-      yelp: {
-        id: "matching-half-cafe-san-francisco-3"
-      },
-      foursquare: {
-        venue_id: '4aea176df964a52047b921e3'
-      }
-    },
-    {
-      name: "Flywheel Coffee Roasters",
-      category: "Coffee",
-      address: "672 Stanyan St, San Francisco, CA 94117",
-      latLng: {lat: 37.769726, lng: -122.453318},
-      yelp: {
-        id: "flywheel-coffee-roasters-san-francisco"
-      },
-      foursquare: {
-        venue_id: '4f934157e4b0ab5f09ebb8fc'
-      }
-    },
-    {
-      name: "Madrone Art Bar",
-      category: "Bar",
-      address: "500 Divisadero St, San Francisco, CA 94117",
-      latLng: {lat: 37.774234, lng: -122.437312},
-      yelp: {
-        id: "madrone-art-bar-san-francisco"
-      },
-      foursquare: {
-        venue_id: '43598100f964a520f7281fe3'
-      }
-    }
-  ],
+var ViewModel = function() {
 
-  buildMap: function(){
-    var map = new google.maps.Map(document.getElementById('map-canvas'), {
-      center: model.mapStartLatLng,
-      zoom: 15
-    });
-    // Dynamically set height of map to the window height
-    $("#map-canvas").css("height", window.innerHeight)
-
-    return map;
-  },
-
-  mapStartLatLng: {lat: 37.775961, lng: -122.445178}
-
-}
-
-var ViewModel = function(map, locations){
   var self = this;
+  var map = controller.map.init();
+  var locations = controller.locations.getLocations();
 
   // instantiate pins array
   self.pins = ko.observableArray();
   self.currentPin = ko.observable();
 
-  // build pins array to hold all single pins
+  // build pins array
   locations.forEach(function(location, i) {
-    self.pins.push(new Pin(map, location.name, location.latLng, location.name));
+    self.pins.push(new Pin(map, location));
   })
-
-  self.setCurrentPin = function(pinIndex) {
-    console.log(name);
-    // self.currentPin(self.pins[name]);
-  }
 
   // Observe search input
   self.searchQuery = ko.observable('');
@@ -83,88 +26,46 @@ var ViewModel = function(map, locations){
     });
 
   });
-
 }
 
 var prev_infowindow = false;
 
 // Pin constructor function
+var Pin = function (map, location) {
 
-var Pin = function (map, name, latLng) {
   var self = this;
-  var marker;
 
-  this.name = ko.observable(name);
-  this.nameId = this.name().replace(/\s+/g, '-').toLowerCase();
-  this.latLng = latLng;
+  // Observables
+  this.name = ko.observable(location.name);
   this.isVisible = ko.observable(false);
   this.isSelected = ko.observable(false);
 
-  // flag to determine if markers are hidden or shown
-  this.toggleVisibility = function(){
-    this.isVisible(!this.isVisible());
-  }
+  // Properties
+  this.latLng = location.latLng;
+  this.foursquareVenueId = location.foursquare.venue_id;
 
   // create marker
-  marker = new google.maps.Marker({
-    position: latLng,
-    title: name
+  var marker = new google.maps.Marker({
+    position: this.latLng,
+    title: this.name()
   });
 
-  // Listen to changes on isVisible property. On change, evaluate if marker should visible or not
-  this.isVisible.subscribe(function(currentState){
-    if (currentState) {
-      marker.setMap(map);
-    } else {
-      marker.setMap(null);
-    }
-  });
+  var infowindowHTML = "<p>" + this.name() + "</p>";
 
-  this.toggleSelected = function(){
-    console.log("toggle selected");
-    this.isSelected(!this.isSelected());
-  }
-
-  // Listen to changes of isSelected property; on change open infowindow
-  this.isSelected.subscribe(function(currentState){
-    console.log("prev_infowindow", prev_infowindow)
-    console.log("currentState", currentState);
-
-    if(currentState){
-      marker['infowindow'].open(map, marker);
-    }
-    prev_infowindow = marker['infowindow'];
+  // Set infowindow obj to be a property marker object
+  marker['infowindow'] = new google.maps.InfoWindow({
+    content: infowindowHTML
   })
 
-  // make marker visible by default
-  this.isVisible(true);
-
-  // On click of marker
-    // Check if an infowindow is already open; if so, close it.
-    // Open infowindow property, which is binded to the marker object
+  // Listen to click events on marker
   marker.addListener("click", function(){
-
-    if(!this['infowindow']) {
-      // Attach infowindow property to marker object
-      this['infowindow'] = new google.maps.InfoWindow({
-        content: document.getElementById(self.nameId)
-      });
-    }
-
 
     if (prev_infowindow) {
       prev_infowindow.close();
     }
 
-    // Get clicked location object from model
-    var clickedLocationObj = getLocationByName(this.title);
-    console.log("marker object", this)
-
-    // Trigger Yelp API call for clickedLocation
-    // var yelpData = getYelpData(clickedLocationObj.yelp.id);
-
     // Trigger Foursquare API call for clickedLocation
-    var foursquareData = getFoursquareData(clickedLocationObj.foursquare.venue_id);
+    controller.api.getFoursquareData(self);
 
     // Animate marker
     animateMarker(this);
@@ -175,6 +76,36 @@ var Pin = function (map, name, latLng) {
     prev_infowindow = this['infowindow'];
   })
 
+  // Listen to changes on isVisible property. On change, evaluate if marker should visible or not
+  this.isVisible.subscribe(function(currentState){
+    if (currentState) {
+      marker.setMap(map);
+    } else {
+      marker.setMap(null);
+    }
+  });
+
+  // Listen to changes of isSelected property; on change open infowindow
+  this.isSelected.subscribe(function(currentState){
+    if(currentState){
+      marker['infowindow'].open(map, marker);
+    }
+    prev_infowindow = marker['infowindow'];
+  })
+
+  // make marker visible by default
+  this.isVisible(true);
+
+}
+
+// Toggle visible flag on Pin
+Pin.prototype.toggleVisibility = function(){
+  this.isVisible(!this.isVisible());
+}
+
+// Toggle selected flag on Pin
+Pin.prototype.toggleSelected = function(){
+  this.isSelected(!this.isSelected());
 }
 
 // Helper functions
@@ -195,59 +126,44 @@ function getLocationByName(locationName) {
   return locations[0];
 }
 
-var businessID = "madrone-art-bar-san-francisco";
 
-function getYelpData(yelpBusinessId){
 
-   var url = API.YELP.CONTEXT.BASE_URL + yelpBusinessId;
-   var params = API.YELP.AUTH_PUBLIC;
-   var consumer_secret = API.YELP.AUTH_SECRET.consumer_secret;
-   var token_secret = API.YELP.AUTH_SECRET.token_secret;
-   var oauth_options = { encodeSignature: false };
+ko.applyBindings(new ViewModel());
 
-  // Add run time oauth properties to params object
-  params.oauth_nonce = nonce_generate();
-  params.oauth_timestamp = Math.floor(Date.now()/1000);
-  params.callback = 'cb'
 
-  // Generate oauthSignature / add to params object
-  var signature = oauthSignature.generate('GET', url, params, consumer_secret, token_secret, oauth_options);
 
-  // Add signature to params objects
-  params.oauth_signature = signature;
 
-  // Call API
-  $.ajax({
-    url: url,
-    data: params,
-    cache: true,
-    dataType: 'jsonp',
-  }).done(function(results) {
-    console.log(results);
-    console.log("url", this.url);
-  }).fail(function(m){
-    console.log("ERROR!", m)
-  })
 
-};
-
-function getFoursquareData(fousquare_venue_id) {
-  var url = API.FOURSQUARE.CONTEXT.BASE_URL + fousquare_venue_id,
-      params = {
-        client_id: API.FOURSQUARE.AUTH_PUBLIC.CLIENT_ID,
-        client_secret: API.FOURSQUARE.AUTH_SECRET.CLIENT_SECRET,
-        v: new Date().toISOString().slice(0,10).replace(/-/g, "")
-      };
-
-  $.ajax({
-    url: url,
-    data: params
-  }).done(function(results) {
-    var venue = results.response.venue;
-    console.log(venue);
-  }).fail(function(m){
-    console.log("ERROR!", m)
-  })
-}
-
-ko.applyBindings(new ViewModel(model.buildMap(), model.locations));
+// function getYelpData(yelpBusinessId){
+//
+//    var url = API.YELP.CONTEXT.BASE_URL + yelpBusinessId;
+//    var params = API.YELP.AUTH_PUBLIC;
+//    var consumer_secret = API.YELP.AUTH_SECRET.consumer_secret;
+//    var token_secret = API.YELP.AUTH_SECRET.token_secret;
+//    var oauth_options = { encodeSignature: false };
+//
+//   // Add run time oauth properties to params object
+//   params.oauth_nonce = controller.nonce_generate();
+//   params.oauth_timestamp = Math.floor(Date.now()/1000);
+//   params.callback = 'cb'
+//
+//   // Generate oauthSignature / add to params object
+//   var signature = oauthSignature.generate('GET', url, params, consumer_secret, token_secret, oauth_options);
+//
+//   // Add signature to params objects
+//   params.oauth_signature = signature;
+//
+//   // Call API
+//   $.ajax({
+//     url: url,
+//     data: params,
+//     cache: true,
+//     dataType: 'jsonp',
+//   }).done(function(results) {
+//     console.log(results);
+//     console.log("url", this.url);
+//   }).fail(function(m){
+//     console.log("ERROR!", m)
+//   })
+//
+// };
