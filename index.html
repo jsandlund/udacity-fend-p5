@@ -42,11 +42,12 @@
             type="text" class="form-control" placeholder="Search...">
           </form>
 
-          <ul class="nav nav-sidebar" data-bind="foreach: pins">
-            <li data-bind="visible: isVisible()">
+          <ul class="nav nav-sidebar" data-bind="foreach: locations" >
+            <li data-bind="visible: $data.isVisible()">
               <a data-bind=
-                    "text: name,
-                    attr: { href: '#' + name(), title: name }
+                    "text: $data.name(),
+                    attr: { href: '#' + $data.name(), title: $data.name() },
+                    click: function(){ controller.location.handleMarkerClick($data, $data.marker) }
                     "
                     >
               </a>
@@ -73,8 +74,9 @@
     <script src="bower_components/knockout/dist/knockout.js"></script>
     <script src="bower_components/oauth-signature/dist/oauth-signature.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArYqgfXQNcM6DHNmunrVpS8hGoa0IaIgk&signed_in=true"></script>
-    <script src="model.js"></script>
+    <script src="initData.js"></script>
     <script src="controller.js"></script>
+    <script src="model.js"></script>
     <script src="app.js"></script>
 
   </body>

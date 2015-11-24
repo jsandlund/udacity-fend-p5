@@ -1,17 +1,31 @@
 var ViewModel = function() {
 
   var self = this;
-  var map = controller.map.init();
-  var locations = controller.locations.getLocations();
+  var map = controller.map.get();
+  var initLocations = initData.locations;
 
-  // instantiate pins array
-  self.pins = ko.observableArray();
   self.currentPin = ko.observable();
 
-  // build pins array
-  locations.forEach(function(location, i) {
-    self.pins.push(new Pin(map, location));
+  // map array of locations from initData to an observableArray of Location objects
+  self.locations = ko.observableArray(initLocations.map(function (location) {
+    return new Location(location.name, location.latLng, location.foursquare.venue_id);
+	}));
+
+
+  // wire up subscriptions to location observable
+  ko.utils.arrayForEach(self.locations(), function(location, i) {
+
+    // subscribe Location to changes of Location.marker.isVisible property
+    // on change of Location.isVisible
+      // set visiblity of marker
+      // if not visible, destory any open infowindows
+    location.isVisible.subscribe(function(newState){
+      location.marker.setVisible(newState);
+      controller.location.closeInfowindow(location);
+    })
+
   })
+
 
   // Observe search input
   self.searchQuery = ko.observable('');
@@ -19,119 +33,27 @@ var ViewModel = function() {
   self.filterPins = ko.computed(function () {
     var search  = self.searchQuery().toLowerCase();
 
-    return ko.utils.arrayFilter(self.pins(), function (pin) {
-        var doesMatch = pin.name().toLowerCase().indexOf(search) >= 0;
-        pin.isVisible(doesMatch);
+    return ko.utils.arrayFilter(self.locations(), function (location) {
+        var doesMatch = location.name().toLowerCase().indexOf(search) >= 0;
+        location.isVisible(doesMatch);
         return doesMatch;
     });
 
   });
 }
 
-var prev_infowindow = false;
+$(document).ready(function() {
 
-// Pin constructor function
-var Pin = function (map, location) {
+  window.app = {
+    viewModel: new ViewModel()
+  }
 
-  var self = this;
+  ko.applyBindings(app.viewModel);
 
-  // Observables
-  this.name = ko.observable(location.name);
-  this.isVisible = ko.observable(false);
-  this.isSelected = ko.observable(false);
+  // Okay to pass Location instances in here?
+  controller.api.initRequests(window.app.viewModel.locations());
 
-  // Properties
-  this.latLng = location.latLng;
-  this.foursquareVenueId = location.foursquare.venue_id;
-
-  // create marker
-  var marker = new google.maps.Marker({
-    position: this.latLng,
-    title: this.name()
-  });
-
-  var infowindowHTML = "<p>" + this.name() + "</p>";
-
-  // Set infowindow obj to be a property marker object
-  marker['infowindow'] = new google.maps.InfoWindow({
-    content: infowindowHTML
-  })
-
-  // Listen to click events on marker
-  marker.addListener("click", function(){
-
-    if (prev_infowindow) {
-      prev_infowindow.close();
-    }
-
-    // Trigger Foursquare API call for clickedLocation
-    controller.api.getFoursquareData(self);
-
-    // Animate marker
-    animateMarker(this);
-
-    // Open infowindow
-    this['infowindow'].open(map, this);
-
-    prev_infowindow = this['infowindow'];
-  })
-
-  // Listen to changes on isVisible property. On change, evaluate if marker should visible or not
-  this.isVisible.subscribe(function(currentState){
-    if (currentState) {
-      marker.setMap(map);
-    } else {
-      marker.setMap(null);
-    }
-  });
-
-  // Listen to changes of isSelected property; on change open infowindow
-  this.isSelected.subscribe(function(currentState){
-    if(currentState){
-      marker['infowindow'].open(map, marker);
-    }
-    prev_infowindow = marker['infowindow'];
-  })
-
-  // make marker visible by default
-  this.isVisible(true);
-
-}
-
-// Toggle visible flag on Pin
-Pin.prototype.toggleVisibility = function(){
-  this.isVisible(!this.isVisible());
-}
-
-// Toggle selected flag on Pin
-Pin.prototype.toggleSelected = function(){
-  this.isSelected(!this.isSelected());
-}
-
-// Helper functions
-function animateMarker(marker){
-  // start bounce
-  marker.setAnimation(google.maps.Animation.BOUNCE);
-  // stop bounce after x MS
-  window.setTimeout(function(){ marker.setAnimation(null) }, 1400)
-}
-
-// Returns a locations object when provided its name
-function getLocationByName(locationName) {
-
-  var locations = model.locations.filter( function(obj) {
-    return obj.name === locationName;
-  });
-  // return only first results
-  return locations[0];
-}
-
-
-
-ko.applyBindings(new ViewModel());
-
-
-
+})
 
 
 // function getYelpData(yelpBusinessId){

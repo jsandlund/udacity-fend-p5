@@ -1,49 +1,35 @@
+function Location (name, latLng, foursquare_venue_id) {
+  var self = this;
+
+  // Observables
+  self.name = ko.observable(name);
+  self.isVisible = ko.observable(true);
+  self.isSelected = ko.observable(false);
+
+  // Non-Observables
+  self.latLng = latLng;
+  self.foursquareData = {};
+  self.foursquareData.venue_id = foursquare_venue_id;
+
+  // Create marker and wire up click listener
+  self.marker = controller.location.createMarker(self.latLng, self.name());
+  self.marker.addListener("click", function(){
+    controller.location.handleMarkerClick(self, this);
+  })
+
+  // Create infowindow; set infowindow to marker
+  self.marker.infowindow = controller.location.createInfowindow();
+
+};
+
+
 var model = {
 
-  locations: [
-
-    {
-      name: "Matching Half Cafe",
-      category: "Coffee",
-      address: "1799 McAllister St, San Francisco, CA 94117",
-      latLng: {lat: 37.777094, lng: -122.441613},
-      yelp: {
-        id: "matching-half-cafe-san-francisco-3"
-      },
-      foursquare: {
-        venue_id: '4aea176df964a52047b921e3'
-      }
-    },
-    {
-      name: "Flywheel Coffee Roasters",
-      category: "Coffee",
-      address: "672 Stanyan St, San Francisco, CA 94117",
-      latLng: {lat: 37.769726, lng: -122.453318},
-      yelp: {
-        id: "flywheel-coffee-roasters-san-francisco"
-      },
-      foursquare: {
-        venue_id: '4f934157e4b0ab5f09ebb8fc'
-      }
-    },
-    {
-      name: "Madrone Art Bar",
-      category: "Bar",
-      address: "500 Divisadero St, San Francisco, CA 94117",
-      latLng: {lat: 37.774234, lng: -122.437312},
-      yelp: {
-        id: "madrone-art-bar-san-francisco"
-      },
-      foursquare: {
-        venue_id: '43598100f964a520f7281fe3'
-      }
-    }
-  ],
-
-  map: {
-    mapStartLatLng: {lat: 37.775961, lng: -122.445178},
-    zoom: 15
+  state: {
+    prev_infowindow: false
   },
+
+  map: controller.map.create(initData.map.mapStartLatLng, initData.map.zoom),
 
   API: {
 
@@ -74,7 +60,6 @@ var model = {
         NEAR: 'San Francisco, CA'
       }
     }
-
   }
 
 }
