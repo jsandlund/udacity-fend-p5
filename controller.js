@@ -96,9 +96,8 @@ var controller = {
 
     initRequests: function(Locations) {
 
-      Locations.forEach(function(Location){
-        controller.api.getAndHandleFoursquareData(Location);
-      })
+      controller.api.getFsq(Locations);
+      controller.api.getYelp(Locations);
 
     },
 
@@ -106,45 +105,120 @@ var controller = {
       return (Math.floor(Math.random() * 1e12).toString());
     },
 
-    getAndHandleFoursquareData: function(Location) {
+    timestamp_generate: function(){
+      return Math.floor(Date.now()/1000);
+    },
 
-      var url = model.API.FOURSQUARE.CONTEXT.BASE_URL + Location.foursquareData.venue_id,
-          params = {
-            client_id: model.API.FOURSQUARE.AUTH_PUBLIC.CLIENT_ID,
-            client_secret: model.API.FOURSQUARE.AUTH_SECRET.CLIENT_SECRET,
-            v: new Date().toISOString().slice(0,10).replace(/-/g, "")
-          };
+    getYelp: function(Locations) {
 
-      $.ajax({
-        url: url,
-        data: params
+      return new Promise(function(resolve, reject) {
+
+        var counter = Locations.length;
+        var resolveYelpFn = function(){console.log("getYelp resolved!")}
+
+        Locations.forEach(function(Location){
+
+          var url = model.API.YELP.CONTEXT.BASE_URL + Location.yelpData.businessId,
+              params = model.API.YELP.AUTH_PUBLIC,
+              consumer_secret = model.API.YELP.AUTH_SECRET.consumer_secret,
+              token_secret = model.API.YELP.AUTH_SECRET.token_secret,
+              oauth_options = { encodeSignature: true }
+
+          // Add run time oauth properties to params object
+          params.oauth_nonce = controller.api.nonce_generate();
+          params.oauth_timestamp = controller.api.timestamp_generate();
+          params.callback = 'cb'
+
+          // Generate oauthSignature / add to params object
+          var signature = oauthSignature.generate('GET', url, params, consumer_secret, token_secret, oauth_options);
+
+          // Add signature to params objects
+          params.oauth_signature = signature;
+
+          // Call API
+          $.ajax({
+            url: url,
+            data: params,
+            cache: true,
+            dataType: 'jsonp',
+          })
+          .done(function(results) {
+            console.log(results);
+          })
+          .fail(function(m){
+            console.log("ERROR!", m)
+          })
+          .always(function(xhr, status){
+            counter--;
+            if(counter === 0) {
+              resolve(resolveYelpFn());
+            }
+          })
+
+        })
+
       })
-      .done(function(result) {
 
-        // Append foursquare data to Location instance
-        var fsq = result.response.venue;
-        Location.foursquareData = fsq;
+    },
 
-        // Build new infowindow HTML string; update Location's infowindow content
-        var infowindowHtml =
-          '<h1>' + fsq.name + '</h1>' +
-          '<h5>' +
-            '<a target="_blank" href="' + fsq.shortUrl + '">' + 'Foursquare Profile' + '</a>' + ' | ' +
-            '<a target="_blank" href="' + fsq.url + '">' + 'Website' + '</a>' +
-          '</h5>' +
-          '<hr>' +
-          '<ul>' +
-            '<li>' + 'Rating: ' + fsq.rating + '</li>' +
-            '<li>' + 'Address: ' + fsq.location.address + '</li>' +
-            '<li>' + 'Total Checkins: ' + fsq.stats.checkinsCount + '</li>' +
-          '</ul>'
+    getFsq: function(Locations) {
 
-        Location.marker.infowindow.content = infowindowHtml;
+      return new Promise(function(resolve, reject) {
+
+        var counter = Locations.length;
+        var resolveFn = function(){console.log("getFsq resolved!")}
+
+        Locations.forEach(function(Location) {
+
+          var url = model.API.FOURSQUARE.CONTEXT.BASE_URL + Location.foursquareData.venue_id,
+              params = {
+                client_id: model.API.FOURSQUARE.AUTH_PUBLIC.CLIENT_ID,
+                client_secret: model.API.FOURSQUARE.AUTH_SECRET.CLIENT_SECRET,
+                v: new Date().toISOString().slice(0,10).replace(/-/g, "")
+              };
+
+          $.ajax({
+            url: url,
+            data: params
+          })
+          .done(function(result) {
+
+            // Append foursquare data to Location instance
+            var fsq = result.response.venue;
+            console.log("Foursquare call complete!")
+            Location.foursquareData = fsq;
+
+          })
+          .fail(function(m){
+            console.log("ERROR!", m);
+          })
+          .always(function(xhr, status){
+            // deincrement counter
+            // when counter reaches 0, resolve Promise
+            counter--;
+            if(counter === 0) {
+              resolve(resolveFn());
+            }
+          })
+        })
 
       })
-      .fail(function(m){
-        console.log("ERROR!", m);
-      });
     }
+
+
   }
 }
+
+// Build new infowindow HTML string; update Location's infowindow content
+// var infowindowHtml =
+//   '<h1>' + fsq.name + '</h1>' +
+//   '<h5>' +
+//     '<a target="_blank" href="' + fsq.shortUrl + '">' + 'Foursquare Profile' + '</a>' + ' | ' +
+//     '<a target="_blank" href="' + fsq.url + '">' + 'Website' + '</a>' +
+//   '</h5>' +
+//   '<hr>' +
+//   '<ul>' +
+//     '<li>' + 'Rating: ' + fsq.rating + '</li>' +
+//     '<li>' + 'Address: ' + fsq.location.address + '</li>' +
+//     '<li>' + 'Total Checkins: ' + fsq.stats.checkinsCount + '</li>' +
+//   '</ul>'

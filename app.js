@@ -8,7 +8,7 @@ var ViewModel = function() {
 
   // map array of locations from initData to an observableArray of Location objects
   self.locations = ko.observableArray(initLocations.map(function (location) {
-    return new Location(location.name, location.latLng, location.foursquare.venue_id);
+    return new Location(location.name, location.latLng, location.foursquare.venue_id, location.yelp.id);
 	}));
 
 
