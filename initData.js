@@ -4,7 +4,7 @@ var initData = {
       name: "Matching Half Cafe",
       latLng: {lat: 37.777094, lng: -122.441613},
       yelp: {
-        id: "matching-half-cafe-san-francisco-3"
+        id: "madrone-art-bar-san-francisco"
       },
       foursquare: {
         venue_id: '4aea176df964a52047b921e3'

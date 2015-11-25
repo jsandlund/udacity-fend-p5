@@ -114,36 +114,39 @@ var controller = {
       return new Promise(function(resolve, reject) {
 
         var counter = Locations.length;
-        var resolveYelpFn = function(){console.log("getYelp resolved!")}
+        var resolveYelpFn = function(){console.log("getYelp resolved!")};
 
         Locations.forEach(function(Location){
 
           var url = model.API.YELP.CONTEXT.BASE_URL + Location.yelpData.businessId,
-              params = model.API.YELP.AUTH_PUBLIC,
               consumer_secret = model.API.YELP.AUTH_SECRET.consumer_secret,
-              token_secret = model.API.YELP.AUTH_SECRET.token_secret,
-              oauth_options = { encodeSignature: true }
+              token_secret = model.API.YELP.AUTH_SECRET.token_secret;
 
-          // Add run time oauth properties to params object
-          params.oauth_nonce = controller.api.nonce_generate();
-          params.oauth_timestamp = controller.api.timestamp_generate();
-          params.callback = 'cb'
+          var params = {
+            oauth_consumer_key: model.API.YELP.AUTH_PUBLIC.oauth_consumer_key,
+            oauth_token: model.API.YELP.AUTH_PUBLIC.oauth_token,
+            oauth_nonce: controller.api.nonce_generate(),
+            oauth_timestamp: controller.api.timestamp_generate(),
+            oauth_signature_method: 'HMAC-SHA1',
+            oauth_version : '1.0',
+            callback: 'cb'
+         };
 
           // Generate oauthSignature / add to params object
-          var signature = oauthSignature.generate('GET', url, params, consumer_secret, token_secret, oauth_options);
-
-          // Add signature to params objects
-          params.oauth_signature = signature;
+          var encodedSignature = oauthSignature.generate('GET', url, params, consumer_secret, token_secret);
+          params.oauth_signature = encodedSignature;
 
           // Call API
           $.ajax({
             url: url,
-            data: params,
             cache: true,
-            dataType: 'jsonp',
+            data: params,
+            dataType: 'jsonp'
           })
-          .done(function(results) {
-            console.log(results);
+          .done(function(results, status, xhr) {
+            console.log("Yelp call complete!")
+            // save Yelp data to Location instance
+            Location.yelpData = results;
           })
           .fail(function(m){
             console.log("ERROR!", m)
@@ -182,10 +185,9 @@ var controller = {
             data: params
           })
           .done(function(result) {
-
+            console.log("Foursquare call complete!");
             // Append foursquare data to Location instance
             var fsq = result.response.venue;
-            console.log("Foursquare call complete!")
             Location.foursquareData = fsq;
 
           })
