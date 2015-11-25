@@ -89,15 +89,18 @@ var controller = {
 
   api: {
 
-    /**
-     * Generates a random number and returns it as a string for OAuthentication
-     * @return {string}
-    **/
-
     initRequests: function(Locations) {
 
-      controller.api.getFsq(Locations);
-      controller.api.getYelp(Locations);
+      // Call 3rd Party APIs
+      // Each call is wrapped in a Promise
+      var getFsq = controller.api.getFsq(Locations);
+      var getYelp = controller.api.getYelp(Locations);
+
+      // When each Promise is resolved, prepare infowindow content
+      Promise.all([getFsq, getYelp]).then(function(results){
+        console.log("DONE!")
+      })
+
 
     },
 
@@ -118,7 +121,7 @@ var controller = {
 
         Locations.forEach(function(Location){
 
-          var url = model.API.YELP.CONTEXT.BASE_URL + Location.yelpData.businessId,
+          var url = model.API.YELP.CONTEXT.BASE_URL + Location.data.yelp.businessId,
               consumer_secret = model.API.YELP.AUTH_SECRET.consumer_secret,
               token_secret = model.API.YELP.AUTH_SECRET.token_secret;
 
@@ -146,7 +149,7 @@ var controller = {
           .done(function(results, status, xhr) {
             console.log("Yelp call complete!")
             // save Yelp data to Location instance
-            Location.yelpData = results;
+            Location.data.yelp = results;
           })
           .fail(function(m){
             console.log("ERROR!", m)
@@ -173,7 +176,7 @@ var controller = {
 
         Locations.forEach(function(Location) {
 
-          var url = model.API.FOURSQUARE.CONTEXT.BASE_URL + Location.foursquareData.venue_id,
+          var url = model.API.FOURSQUARE.CONTEXT.BASE_URL + Location.data.foursquare.venue_id,
               params = {
                 client_id: model.API.FOURSQUARE.AUTH_PUBLIC.CLIENT_ID,
                 client_secret: model.API.FOURSQUARE.AUTH_SECRET.CLIENT_SECRET,
@@ -188,7 +191,7 @@ var controller = {
             console.log("Foursquare call complete!");
             // Append foursquare data to Location instance
             var fsq = result.response.venue;
-            Location.foursquareData = fsq;
+            Location.data.foursquare = fsq;
 
           })
           .fail(function(m){

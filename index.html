@@ -42,9 +42,9 @@
             type="text" class="form-control" placeholder="Search...">
           </form>
 
-          <ul class="nav nav-sidebar" data-bind="foreach: locations" >
-            <li data-bind="visible: $data.isVisible()">
-              <a data-bind=
+          <ul class="nav nav-sidebar location-list" data-bind="foreach: locations" >
+            <li class="location-item" data-bind="visible: $data.isVisible()">
+              <a class="location-link" data-bind=
                     "text: $data.name(),
                     attr: { href: '#' + $data.name(), title: $data.name() },
                     click: function(){ controller.location.handleMarkerClick($data, $data.marker) }

@@ -8,11 +8,14 @@ function Location (name, latLng, foursquare_venue_id, yelp_business_id) {
 
   // Non-Observables
   self.latLng = latLng;
-  self.yelpData = {};
-  self.yelpData.businessId = yelp_business_id;
-  self.foursquareData = {};
-  self.foursquareData.venue_id = foursquare_venue_id;
-
+  self.data = {
+    yelp: {
+        businessId: yelp_business_id
+    },
+    foursquare: {
+      venue_id: foursquare_venue_id
+    }
+  }
 
   // Create marker and wire up click listener
   self.marker = controller.location.createMarker(self.latLng, self.name());
