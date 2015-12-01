@@ -37,7 +37,7 @@ var controller = {
       return newMarker;
     },
 
-    handleMarkerClick: function(location, marker) {
+    handleMarkerClick: function(Location, marker) {
 
       if (model.state.prev_infowindow) {
         model.state.prev_infowindow.close();
@@ -47,7 +47,7 @@ var controller = {
       controller.location.animateMarker(marker);
 
       // Toggle Selected
-      controller.location.toggleSelected(location)
+      controller.location.toggleSelected(Location)
 
       // Open infowindow
       marker['infowindow'].open(controller.map.get(), marker);
@@ -55,26 +55,57 @@ var controller = {
       model.state.prev_infowindow = marker['infowindow'];
     },
 
-    closeInfowindow: function(location) {
-      return location.marker.infowindow.close();
+    closeInfowindow: function(Location) {
+      return Location.marker.infowindow.close();
     },
 
-    animateMarker: function(marker){
+    animateMarker: function(marker) {
       // start bounce
       marker.setAnimation(google.maps.Animation.BOUNCE);
       // stop bounce after x MS
       window.setTimeout(function(){ marker.setAnimation(null) }, 1400)
     },
 
-    createInfowindow: function(){
+    createInfowindow: function() {
       var infowindow = new google.maps.InfoWindow({
         content: '<p> Loading... </p>'
       });
       return infowindow;
     },
 
-    updateInfowindow: function(infowindow, htmlString){
-      infowindow.content = htmlString
+    updateInfowindow: function(Location) {
+      var infowindow = Location.marker.infowindow,
+          fsq = Location.data.foursquare,
+          yelp = Location.data.yelp,
+          htmlString = '';
+      htmlString =
+
+      '<h1>' + fsq.name + '</h1>' +
+      '<h5>' +
+        '<a target="_blank" href="' + fsq.shortUrl + '">' + 'Foursquare Profile' + '</a>' + ' | ' +
+        '<a target="_blank" href="' + yelp.url + '">' + 'Yelp Profile' + '</a>' + ' | ' +
+        '<a target="_blank" href="' + fsq.url + '">' + 'Website' + '</a>'  +
+      '</h5>' +
+      '<p>' + fsq.location.address + ', ' + fsq.location.city + ' ' + fsq.location.state + '</p>' +
+      '<p>' + fsq.contact.formattedPhone + '</p>' +
+      '<hr>' +
+      '<ul>' +
+        '<li>' + 'Ratings ' +
+          '<ul>' +
+            '<li> Foursquare: ' + fsq.rating + ' / 10' + '</li>' +
+            '<li> Yelp: ' + yelp.rating + ' / 5' + '</li>' +
+          '</ul>' +
+        '</li>' +
+        '<li>' + 'Review Counts ' +
+          '<ul>' +
+            '<li> Foursquare '+ fsq.ratingSignals + '</li>' +
+            '<li> Yelp: '+ yelp.review_count  + '</li>' +
+          '</ul>' +
+        '</li>' +
+      '</ul>'
+
+      // Update infowindow with new string
+      infowindow.content = htmlString;
     },
 
     toggleVisibility: function(location){
@@ -96,9 +127,15 @@ var controller = {
       var getFsq = controller.api.getFsq(Locations);
       var getYelp = controller.api.getYelp(Locations);
 
-      // When each Promise is resolved, prepare infowindow content
+      // When each Promise is resolved, prepare infowindow content and update all infowindows
       Promise.all([getFsq, getYelp]).then(function(results){
-        console.log("DONE!")
+
+        Locations.forEach(function(Location){
+          controller.location.updateInfowindow(Location);
+        })
+
+        console.log("Il est fini!");
+
       })
 
 
@@ -213,17 +250,3 @@ var controller = {
 
   }
 }
-
-// Build new infowindow HTML string; update Location's infowindow content
-// var infowindowHtml =
-//   '<h1>' + fsq.name + '</h1>' +
-//   '<h5>' +
-//     '<a target="_blank" href="' + fsq.shortUrl + '">' + 'Foursquare Profile' + '</a>' + ' | ' +
-//     '<a target="_blank" href="' + fsq.url + '">' + 'Website' + '</a>' +
-//   '</h5>' +
-//   '<hr>' +
-//   '<ul>' +
-//     '<li>' + 'Rating: ' + fsq.rating + '</li>' +
-//     '<li>' + 'Address: ' + fsq.location.address + '</li>' +
-//     '<li>' + 'Total Checkins: ' + fsq.stats.checkinsCount + '</li>' +
-//   '</ul>'

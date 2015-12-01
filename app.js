@@ -54,38 +54,3 @@ $(document).ready(function() {
   controller.api.initRequests(window.app.viewModel.locations());
 
 })
-
-
-// function getYelpData(yelpBusinessId){
-//
-//    var url = API.YELP.CONTEXT.BASE_URL + yelpBusinessId;
-//    var params = API.YELP.AUTH_PUBLIC;
-//    var consumer_secret = API.YELP.AUTH_SECRET.consumer_secret;
-//    var token_secret = API.YELP.AUTH_SECRET.token_secret;
-//    var oauth_options = { encodeSignature: false };
-//
-//   // Add run time oauth properties to params object
-//   params.oauth_nonce = controller.nonce_generate();
-//   params.oauth_timestamp = Math.floor(Date.now()/1000);
-//   params.callback = 'cb'
-//
-//   // Generate oauthSignature / add to params object
-//   var signature = oauthSignature.generate('GET', url, params, consumer_secret, token_secret, oauth_options);
-//
-//   // Add signature to params objects
-//   params.oauth_signature = signature;
-//
-//   // Call API
-//   $.ajax({
-//     url: url,
-//     data: params,
-//     cache: true,
-//     dataType: 'jsonp',
-//   }).done(function(results) {
-//     console.log(results);
-//     console.log("url", this.url);
-//   }).fail(function(m){
-//     console.log("ERROR!", m)
-//   })
-//
-// };
