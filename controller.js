@@ -8,10 +8,15 @@ var controller = {
     **/
     create: function(startLatLng, zoom) {
 
-      var map = new google.maps.Map(document.getElementById('map-canvas'), {
-        center: startLatLng,
-        zoom: zoom
-      });
+      try {
+        var map = new google.maps.Map(document.getElementById('map-canvas'), {
+          center: startLatLng,
+          zoom: zoom
+        });
+      }
+      catch(err){
+        controller.helpers.handleError("Google maps is not loading. This may be due to not having an internet connection.");
+      }
 
       // Set map height to the window height
       $("#map-canvas").css("height", window.innerHeight)
@@ -189,7 +194,7 @@ var controller = {
             Location.data.yelp = results;
           })
           .fail(function(m){
-            console.log("ERROR!", m)
+            handleError(m);
           })
           .always(function(xhr, status){
             counter--;
@@ -232,7 +237,7 @@ var controller = {
 
           })
           .fail(function(m){
-            console.log("ERROR!", m);
+            handleError(m);
           })
           .always(function(xhr, status){
             // deincrement counter
@@ -246,7 +251,15 @@ var controller = {
 
       })
     }
+  }, // end api
 
+  helpers: {
 
+    handleError: function(msg){
+
+      return alert(msg);
+
+    }
   }
+
 }
