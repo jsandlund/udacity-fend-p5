@@ -50,7 +50,6 @@ $(document).ready(function() {
 
   ko.applyBindings(app.viewModel);
 
-  // Okay to pass Location instances in here?
   controller.api.initRequests(window.app.viewModel.locations());
 
 })

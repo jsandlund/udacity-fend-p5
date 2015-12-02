@@ -1,10 +1,15 @@
+
+// This is seed data for the application
+// It is static and does not change. 
+// All properties are required for the app to function as-intended
+
 var initData = {
   locations: [
     {
       name: "Matching Half Cafe",
       latLng: {lat: 37.777094, lng: -122.441613},
       yelp: {
-        id: "madrone-art-bar-san-francisco"
+        id: "matching-half-cafe-san-francisco-3"
       },
       foursquare: {
         venue_id: '4aea176df964a52047b921e3'

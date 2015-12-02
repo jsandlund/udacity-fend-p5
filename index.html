@@ -42,7 +42,8 @@
             type="text" class="form-control" placeholder="Search...">
           </form>
 
-          <ul class="nav nav-sidebar location-list" data-bind="foreach: locations" >
+          <!-- Hide list items on mobile -->
+          <ul class="nav nav-sidebar location-list hidden-xs" data-bind="foreach: locations" >
             <li class="location-item" data-bind="visible: $data.isVisible()">
               <a class="location-link" data-bind=
                     "text: $data.name(),
@@ -56,7 +57,6 @@
 
         </div>
 
-        <!-- Map rendered here -->
         <div class="col-md-9 col-md-offset-3 main">
         </div>
 

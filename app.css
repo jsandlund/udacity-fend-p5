@@ -5,6 +5,15 @@ html, body {
   width: 100%;
 }
 
+/* Mobile styles */
+@media (max-width: 768px) {
+  /* Reposition sidebar to top on mobile */
+  .sidebar {
+    bottom: initial !important;
+    width: 100% !important;
+  }
+}
+
 .container-fluid { padding:0px;}
 
 .sidebar {
@@ -58,4 +67,10 @@ a.location-link {
 #map-canvas {
   width: 100%;
   padding-left:0px;
+}
+
+.nav>li>a:focus,
+.nav>li>a:hover {
+  background-color: inherit;
+  color: #FFC107;
 }

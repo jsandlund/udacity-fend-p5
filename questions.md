@@ -1,6 +1,20 @@
 # ToDo
+  <!--
+  # DONE
   - Add error handling
-  - 
+  - update styling
+    - for active and cliked nav elements
+    - make mobile friendly
+      - hide nav elements on mobile
+      - set nav to top
+
+  -->
+   - Usability - center map to marker on click of marker 
+   - create readme
+   - document code
+
+
+  <div class="alert alert-warning alert-dismissible fade in" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button> <strong>Holy guacamole!</strong> Best check yo self, you're not looking too good. </div>
 
 # Questions
 

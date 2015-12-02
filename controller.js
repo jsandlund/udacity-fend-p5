@@ -237,7 +237,7 @@ var controller = {
 
           })
           .fail(function(m){
-            handleError(m);
+            controller.helpers.handleError(m);
           })
           .always(function(xhr, status){
             // deincrement counter
