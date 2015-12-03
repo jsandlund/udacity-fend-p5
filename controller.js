@@ -4,8 +4,11 @@ var controller = {
 
     /**
      * Instantiates google Map object
+     * @param {object} startLatLng - where map is centered on initialization.
+     * @param {number} zoom - starting zoom level of map on initilization.
      * @return map {object}
     **/
+
     create: function(startLatLng, zoom) {
 
       try {
@@ -18,7 +21,7 @@ var controller = {
         controller.helpers.handleError("Google maps is not loading. This may be due to not having an internet connection.");
       }
 
-      // Set map height to the window height
+      // Set map height to window height
       $("#map-canvas").css("height", window.innerHeight)
 
       return map;
@@ -29,7 +32,15 @@ var controller = {
     }
   },
 
+  // Includes all methods that deal with instances of the Location class
   location: {
+
+    /**
+     * Creates a new marker object
+     * @param {object} latLng - where map is centered on initialization.
+     * @param {string} name
+     * @returns {object}
+    **/
 
     createMarker: function(latLng, name){
 
@@ -44,6 +55,7 @@ var controller = {
 
     handleMarkerClick: function(Location, marker) {
 
+      // close previously clicked marker's infowindow
       if (model.state.prev_infowindow) {
         model.state.prev_infowindow.close();
       }
@@ -51,12 +63,13 @@ var controller = {
       // Animate marker
       controller.location.animateMarker(marker);
 
-      // Toggle Selected
+      // Toggle selected Location
       controller.location.toggleSelected(Location)
 
       // Open infowindow
       marker['infowindow'].open(controller.map.get(), marker);
 
+      // Set prev_infowindow to most recently clicked marker
       model.state.prev_infowindow = marker['infowindow'];
     },
 
@@ -113,16 +126,19 @@ var controller = {
       infowindow.content = htmlString;
     },
 
-    toggleVisibility: function(location){
-      location.isVisible(!location.isVisible());
+    // Toggle visibility of a Location's marker by setting its isVisible property
+    // This property is 'listened to' by Knockout
+    toggleVisibility: function(Location){
+      Location.isVisible(!Location.isVisible());
     },
 
-    toggleSelected: function(location){
-      location.isSelected(!location.isSelected());
+    toggleSelected: function(Location){
+      Location.isSelected(!Location.isSelected());
     }
 
   },
 
+  // methods related to getting and handling data from all APIs
   api: {
 
     initRequests: function(Locations) {
@@ -253,12 +269,11 @@ var controller = {
     }
   }, // end api
 
+  // Various helper functions
   helpers: {
 
     handleError: function(msg){
-
       return alert(msg);
-
     }
   }
 

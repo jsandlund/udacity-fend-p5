@@ -1,4 +1,14 @@
+/**
+ * Represents a Location.
+ * @class
+ * @param {string} name.
+ * @param {object} latLng -  contains properties for latitude & longitude of location
+ * @param {string} foursquare_venue_id
+ * @param {string} yelp_business_id
+ */
+
 function Location (name, latLng, foursquare_venue_id, yelp_business_id) {
+
   var self = this;
 
   // Observables
@@ -17,13 +27,13 @@ function Location (name, latLng, foursquare_venue_id, yelp_business_id) {
     }
   }
 
-  // Create marker and wire up click listener
+  // Create marker object & wire up click listener
   self.marker = controller.location.createMarker(self.latLng, self.name());
   self.marker.addListener("click", function(){
     controller.location.handleMarkerClick(self, this);
   })
 
-  // Create infowindow; set infowindow to marker
+  // Create infowindow && set as a property of the marker object
   self.marker.infowindow = controller.location.createInfowindow();
 
 };
@@ -31,12 +41,15 @@ function Location (name, latLng, foursquare_venue_id, yelp_business_id) {
 
 var model = {
 
+  // tracks data related to the state of the app
   state: {
     prev_infowindow: false
   },
 
+  // contains the Google Maps api object
   map: controller.map.create(initData.map.mapStartLatLng, initData.map.zoom),
 
+  // All data related to 3rd party APIs used in this application
   API: {
 
     YELP: {

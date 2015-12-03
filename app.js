@@ -1,3 +1,7 @@
+// Main ViewModel
+// Handles the UI of the Sidebar && the visibility of marker objects
+// It DOES NOT handle the UI of infomarkers
+// It is independent of all data collection && storage
 var ViewModel = function() {
 
   var self = this;
@@ -25,7 +29,6 @@ var ViewModel = function() {
     })
 
   })
-
 
   // Observe search input
   self.searchQuery = ko.observable('');

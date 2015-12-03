@@ -1,6 +1,6 @@
 
 // This is seed data for the application
-// It is static and does not change. 
+// It is static and does not change.
 // All properties are required for the app to function as-intended
 
 var initData = {
@@ -13,6 +13,26 @@ var initData = {
       },
       foursquare: {
         venue_id: '4aea176df964a52047b921e3'
+      }
+    },
+    {
+      name: "Mojo Bicycle Cafe",
+      latLng: {lat: 37.775549, lng: -122.438124},
+      yelp: {
+        id: "mojo-bicycle-cafe-san-francisco-2"
+      },
+      foursquare: {
+        venue_id: '49c29489f964a52004561fe3'
+      }
+    },
+    {
+      name: "The Mill",
+      latLng: {lat: 37.776465, lng: -122.437789},
+      yelp: {
+        id: "the-mill-san-francisco"
+      },
+      foursquare: {
+        venue_id: '4feddd79d86cd6f22dc171a9'
       }
     },
     {
