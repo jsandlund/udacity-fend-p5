@@ -1,4 +1,4 @@
-## NoPa Explorer
+## NoPa Explorer - http://jsandlund.github.io/udacity-fend-p5
 Explore 5 great spots in the "North of the Panhandle" neighborhood of San Francisco, also known as NoPa :-).
 
 This is Project 5 for Udacity's Front-End Web Developer Nanodegree. Objectives of this project:
