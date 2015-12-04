@@ -7,7 +7,7 @@ This is Project 5 for Udacity's Front-End Web Developer Nanodegree. Objectives o
 - Use a third-party MV* framework (Knockout.js) to manage the data and codebase
 - Interact with multiple online public APIs to retrieve data asynchronously using AJAX
 
-We get ratings data from Foursquare & Yelp. Native JS Promises are used to handle multiple asynchronous requests. I attempted to use OO practices to structure the codebase. 
+We get ratings data from Foursquare & Yelp. Native JS Promises are used to handle multiple asynchronous requests. I attempted to use object oriented practices to make the codebase highly modular & readable.
 
 ## Installation
 
