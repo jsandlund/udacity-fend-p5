@@ -1,0 +1,9 @@
+{
+  "strict": "global",
+  "globals": {
+    "document": false,
+    "$": false,
+    "ko": false,
+    "initData": false,
+  }
+}

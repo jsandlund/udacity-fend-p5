@@ -1,3 +1,4 @@
+"use strict";
 
 // This is seed data for the application
 // It is static and does not change.
@@ -60,4 +61,4 @@ var initData = {
     mapStartLatLng: {lat: 37.775961, lng: -122.445178},
     zoom: 15
   }
-}
+};

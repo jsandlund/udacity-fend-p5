@@ -4,7 +4,7 @@ Explore 5 great spots in the "North of the Panhandle" neighborhood of San Franci
 This is Project 5 for Udacity's Front-End Web Developer Nanodegree. Objectives of this project:
 
 - Create a single-page appliation featuring a map of my neighborhood, highlighting different locations
-- Use a third-party MV* framework (Knockout.js) to manage the data and codebase
+- Use a third-party MVVM framework (Knockout.js) to manage the data and codebase
 - Interact with multiple online public APIs to retrieve data asynchronously using AJAX
 
 We get ratings data from Foursquare & Yelp. Native JS Promises are used to handle multiple asynchronous requests. I attempted to use object oriented practices to make the codebase highly modular & readable.

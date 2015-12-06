@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * Represents a Location.
  * @class
@@ -14,29 +16,24 @@ function Location (name, latLng, foursquare_venue_id, yelp_business_id) {
   // Observables
   self.name = ko.observable(name);
   self.isVisible = ko.observable(true);
-  self.isSelected = ko.observable(false);
 
   // Non-Observables
   self.latLng = latLng;
   self.data = {
-    yelp: {
-        businessId: yelp_business_id
-    },
-    foursquare: {
-      venue_id: foursquare_venue_id
-    }
-  }
+    yelp: { businessId: yelp_business_id },
+    foursquare: { venue_id: foursquare_venue_id }
+  };
 
   // Create marker object & wire up click listener
   self.marker = controller.location.createMarker(self.latLng, self.name());
   self.marker.addListener("click", function(){
     controller.location.handleMarkerClick(self, this);
-  })
+  });
 
   // Create infowindow && set as a property of the marker object
   self.marker.infowindow = controller.location.createInfowindow();
 
-};
+}
 
 
 var model = {
@@ -81,4 +78,4 @@ var model = {
     }
   }
 
-}
+};

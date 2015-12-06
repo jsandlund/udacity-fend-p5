@@ -1,3 +1,5 @@
+"use strict";
+
 var controller = {
 
   map: {
@@ -16,15 +18,16 @@ var controller = {
           center: startLatLng,
           zoom: zoom
         });
+
+        // Set map height to window height
+        $("#map-canvas").css("height", window.innerHeight);
+
+        return map;
       }
       catch(err){
         controller.helpers.handleError("Google maps is not loading. This may be due to not having an internet connection.");
       }
 
-      // Set map height to window height
-      $("#map-canvas").css("height", window.innerHeight)
-
-      return map;
     },
 
     get: function(){
@@ -63,9 +66,6 @@ var controller = {
       // Animate marker
       controller.location.animateMarker(marker);
 
-      // Toggle selected Location
-      controller.location.toggleSelected(Location)
-
       // Open infowindow
       marker['infowindow'].open(controller.map.get(), marker);
 
@@ -81,7 +81,7 @@ var controller = {
       // start bounce
       marker.setAnimation(google.maps.Animation.BOUNCE);
       // stop bounce after x MS
-      window.setTimeout(function(){ marker.setAnimation(null) }, 1400)
+      window.setTimeout(function(){ marker.setAnimation(null) }, 1400);
     },
 
     createInfowindow: function() {
@@ -97,7 +97,6 @@ var controller = {
           yelp = Location.data.yelp,
           htmlString = '';
       htmlString =
-
       '<h1>' + fsq.name + '</h1>' +
       '<h5>' +
         '<a target="_blank" href="' + fsq.shortUrl + '">' + 'Foursquare Profile' + '</a>' + ' | ' +
@@ -120,7 +119,7 @@ var controller = {
             '<li> Yelp: '+ yelp.review_count  + '</li>' +
           '</ul>' +
         '</li>' +
-      '</ul>'
+      '</ul>';
 
       // Update infowindow with new string
       infowindow.content = htmlString;
@@ -130,10 +129,6 @@ var controller = {
     // This property is 'listened to' by Knockout
     toggleVisibility: function(Location){
       Location.isVisible(!Location.isVisible());
-    },
-
-    toggleSelected: function(Location){
-      Location.isSelected(!Location.isSelected());
     }
 
   },
@@ -153,12 +148,11 @@ var controller = {
 
         Locations.forEach(function(Location){
           controller.location.updateInfowindow(Location);
-        })
+        });
 
         console.log("Il est fini!");
 
-      })
-
+      });
 
     },
 
@@ -205,23 +199,23 @@ var controller = {
             dataType: 'jsonp'
           })
           .done(function(results, status, xhr) {
-            console.log("Yelp call complete!")
+            console.log("Yelp call complete!");
             // save Yelp data to Location instance
             Location.data.yelp = results;
           })
           .fail(function(m){
-            handleError(m);
+            controller.helpers.handleError(m);
           })
           .always(function(xhr, status){
             counter--;
             if(counter === 0) {
               resolve(resolveYelpFn());
             }
-          })
+          });
 
-        })
+        });
 
-      })
+      });
 
     },
 
@@ -262,10 +256,10 @@ var controller = {
             if(counter === 0) {
               resolve(resolveFn());
             }
-          })
-        })
+          });
+        });
 
-      })
+      });
     }
   }, // end api
 
@@ -276,5 +270,4 @@ var controller = {
       return alert(msg);
     }
   }
-
-}
+};

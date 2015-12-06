@@ -4,7 +4,6 @@
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
       <meta name="description" content="">
       <meta name="author" content="">
 
@@ -14,12 +13,7 @@
       <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
       <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
       <link href="app.css" rel="stylesheet">
-
-      <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-      <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-      <![endif]-->
+      
   </head>
 
   <body id="body">
@@ -37,14 +31,14 @@
           </div>
 
           <!-- Search Form -->
-          <form class="navbar-form">
+          <form class="navbar-form hidden-xs">
             <input
             data-bind="textInput: searchQuery"
             type="text" class="form-control" placeholder="Search...">
           </form>
 
           <!-- Hide list items on mobile -->
-          <ul class="nav nav-sidebar location-list hidden-xs" data-bind="foreach: locations" >
+          <ul class="nav nav-sidebar location-list" data-bind="foreach: locations" >
             <li class="location-item" data-bind="visible: $data.isVisible()">
               <a class="location-link" data-bind=
                     "text: $data.name(),

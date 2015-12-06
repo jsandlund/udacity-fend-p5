@@ -10,3 +10,10 @@
   - document code
   - create readme
   -->
+
+- Load Google Maps asynchronously
+- Fix error handling for ajax requests
+- Show list items on mobile
+- Explore changing implemetnation of infowindows 
+- Format code
+- Update comments re feedback
