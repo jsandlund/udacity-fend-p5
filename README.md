@@ -9,6 +9,17 @@ This is Project 5 for Udacity's Front-End Web Developer Nanodegree. Objectives o
 
 We get ratings data from Foursquare & Yelp. Native JS Promises are used to handle multiple asynchronous requests. I attempted to use object oriented practices to make the codebase highly modular & readable.
 
+## Screenshots
+
+#### Desktop
+![Desktop image]
+(https://www.evernote.com/shard/s154/sh/1258cd6e-1a20-4287-b1c1-e0d79672cb65/46e963f34929d784/res/fdddb960-d910-494a-bd66-8bee0f4f3a1c/skitch.png)
+
+#### Mobile
+![Mobile image]
+(https://www.evernote.com/shard/s154/sh/6f77a35a-3206-41c3-97f4-7213cd28527c/395d527b37024a64/res/de8b78b5-5aeb-4445-bdb6-f82371396765/skitch.png)
+
+
 ## Installation
 
 1. Download the repo.

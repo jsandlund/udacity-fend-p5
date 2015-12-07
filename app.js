@@ -45,12 +45,38 @@ var ViewModel = function() {
   });
 };
 
+function initApp(){
+
+  /*
+  Kick things off with loading the Google maps api asynchronously
+  On completion, fire up our viewmodel and call all 3rd party data sources
+  */
+  $.getScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyArYqgfXQNcM6DHNmunrVpS8hGoa0IaIgk&signed_in=true" )
+
+    .done(function( script, textStatus ) {
+
+      // Create google map and save to our model for later use
+      model.map = controller.map.create(initData.map.mapStartLatLng, initData.map.zoom);
+
+      // Make our viewModel a globally accessible object and apply knockout bindings
+      window.app = { viewModel: new ViewModel() };
+      ko.applyBindings(window.app.viewModel);
+
+      // Initialize asyncronous data requests
+      controller.api.initRequests(window.app.viewModel.locations());
+
+      // Bind global event listeners
+      controller.helpers.bindGlobalEventListeners();
+    })
+    .fail(function( jqxhr, settings, exception ) {
+      alert("Whoops! Google Maps isn't loading. This may mean you're not online.");
+    });
+
+}
+
+// On document ready event, initialize the application
 $(document).ready(function() {
 
-  window.app = { viewModel: new ViewModel() };
-
-  ko.applyBindings(window.app.viewModel);
-
-  controller.api.initRequests(window.app.viewModel.locations());
+  initApp();
 
 });

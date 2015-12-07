@@ -15,6 +15,7 @@ function Location (name, latLng, foursquare_venue_id, yelp_business_id) {
 
   // Observables
   self.name = ko.observable(name);
+  self.nameString = ko.observable(name.replace(/\s+/g, '-').toLowerCase());
   self.isVisible = ko.observable(true);
 
   // Non-Observables
@@ -44,7 +45,7 @@ var model = {
   },
 
   // contains the Google Maps api object
-  map: controller.map.create(initData.map.mapStartLatLng, initData.map.zoom),
+  map: {},
 
   // All data related to 3rd party APIs used in this application
   API: {

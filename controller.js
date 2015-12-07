@@ -66,6 +66,10 @@ var controller = {
       // Animate marker
       controller.location.animateMarker(marker);
 
+      // Add active class to selected Location's link
+      $('.active').removeClass('active');
+      $("a[data-location='" + Location.nameString() +"']").addClass('active');
+
       // Open infowindow
       marker['infowindow'].open(controller.map.get(), marker);
 
@@ -156,14 +160,6 @@ var controller = {
 
     },
 
-    nonce_generate: function() {
-      return (Math.floor(Math.random() * 1e12).toString());
-    },
-
-    timestamp_generate: function(){
-      return Math.floor(Date.now()/1000);
-    },
-
     getYelp: function(Locations) {
 
       return new Promise(function(resolve, reject) {
@@ -180,8 +176,8 @@ var controller = {
           var params = {
             oauth_consumer_key: model.API.YELP.AUTH_PUBLIC.oauth_consumer_key,
             oauth_token: model.API.YELP.AUTH_PUBLIC.oauth_token,
-            oauth_nonce: controller.api.nonce_generate(),
-            oauth_timestamp: controller.api.timestamp_generate(),
+            oauth_nonce: controller.helpers.nonce_generate(),
+            oauth_timestamp: controller.helpers.timestamp_generate(),
             oauth_signature_method: 'HMAC-SHA1',
             oauth_version : '1.0',
             callback: 'cb'
@@ -204,7 +200,7 @@ var controller = {
             Location.data.yelp = results;
           })
           .fail(function(m){
-            controller.helpers.handleError(m);
+            controller.helpers.handleError("Whoops! The Yelp API isn't loading.");
           })
           .always(function(xhr, status){
             counter--;
@@ -247,7 +243,7 @@ var controller = {
 
           })
           .fail(function(m){
-            controller.helpers.handleError(m);
+            controller.helpers.handleError("Whoops! The Yelp API isn't loading.");
           })
           .always(function(xhr, status){
             // deincrement counter
@@ -268,6 +264,38 @@ var controller = {
 
     handleError: function(msg){
       return alert(msg);
+    },
+
+    nonce_generate: function() {
+      return (Math.floor(Math.random() * 1e12).toString());
+    },
+
+    timestamp_generate: function(){
+      return Math.floor(Date.now()/1000);
+    },
+
+    bindGlobalEventListeners: function(){
+
+      // Shortcut events
+        // Declare keyboard shortcut functions
+        function _searchLocations(e){
+          e.preventDefault();
+          $('#search-input').focus();
+        }
+        // Bind shortcut functions to shortcut keys
+        Mousetrap.bind('s', function(e){
+          _searchLocations(e);
+        });
+
+      // Show / hide nav animation on mobile
+        // On click of nav button
+        $("#btn-nav-toggle").click(function(){
+          // toggle visibility of list items && rotate icon
+          $("#nav-container").slideToggle(500);
+          $("i.fa-caret-square-o-down").toggleClass("fa-rotate-180");
+        });
+
     }
+
   }
 };

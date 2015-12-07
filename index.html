@@ -9,11 +9,10 @@
 
       <title> NoPa Explorer </title>
 
-
       <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
       <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
       <link href="app.css" rel="stylesheet">
-      
+
   </head>
 
   <body id="body">
@@ -27,22 +26,30 @@
 
           <!-- App Logo -->
           <div id="logo-container">
-            <h1> NoPa Explorer </h1>
+            <h1> NoPa Explorer <button type="button" class="visible-xs pull-right" id="btn-nav-toggle"> <i class="fa fa-caret-square-o-down"></i> </button> </h1>
           </div>
 
           <!-- Search Form -->
           <form class="navbar-form hidden-xs">
-            <input
-            data-bind="textInput: searchQuery"
-            type="text" class="form-control" placeholder="Search...">
+            <div class="form-group">
+              <input
+              id="search-input"
+              data-bind="textInput: searchQuery"
+              type="text" class="form-control" placeholder="Search...">
+            </div>
           </form>
 
           <!-- Hide list items on mobile -->
-          <ul class="nav nav-sidebar location-list" data-bind="foreach: locations" >
+          <div id="nav-container">
+          <ul class="nav nav-sidebar nav-sidebar-primary location-list" data-bind="foreach: locations" >
             <li class="location-item" data-bind="visible: $data.isVisible()">
               <a class="location-link" data-bind=
                     "text: $data.name(),
-                    attr: { href: '#' + $data.name(), title: $data.name() },
+                    attr: {
+                      href: '#' + $data.nameString(),
+                      title: $data.name(),
+                      'data-location': $data.nameString()
+                     },
                     click: function(){ controller.location.handleMarkerClick($data, $data.marker) }
                     "
                     >
@@ -50,11 +57,53 @@
             </li>
           </ul>
 
-        </div>
+          <ul class="nav nav-sidebar nav-sidebar-secondary hidden-xs">
+            <li> <a data-toggle="modal" data-target="#js-about-modal" class="brand-color" id="about-link" href="#"> <i class="fa fa-question-circle"></i> </a> </li>
+          </ul>
 
         <div class="col-md-9 col-md-offset-3 main">
         </div>
 
+      </div>
+    </div>
+
+
+    <!-- About App Modal -->
+    <div id="js-about-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+      <div class="modal-dialog modal-regular modal-about">
+        <div class="modal-content">
+          <div class="modal-body">
+
+            <div class="row">
+              <div class="col-md-3">
+                <p> <i class="fa fa-question-circle"></i> About </p>
+              </div>
+              <div class="col-md-9">
+                <p>
+                  This 'app' is a project for <a target="_blank" href="https://www.udacity.com/course/front-end-web-developer-nanodegree--nd001"> Udacity's Front End Nanodegree Program</a>. Students are asked to use
+                  KnockoutJS, the Google Maps API, and at least one additional 3rd party API
+                  to translate their neighborhood into an interactive, searchable map.
+                  I used APIs from Foursquare & Yelp to pull contextual data about businesses in my neighborhood. <a target="_blank" href="https://github.com/jsandlund/udacity-fend-p5/blob/master/README.md"> Learn more on github.</a>
+                </p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-3">
+                <p><i class="fa fa-keyboard-o"></i> Shortcuts </p>
+              </div>
+              <div class="col-md-9">
+                <table>
+                  <tr>
+                    <td class="shortcut-key"> s </td>
+                    <td class=""> Search Locations </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     </div>
 
@@ -64,7 +113,8 @@
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/knockout/dist/knockout.js"></script>
     <script src="bower_components/oauth-signature/dist/oauth-signature.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArYqgfXQNcM6DHNmunrVpS8hGoa0IaIgk&signed_in=true"></script>
+    <script src="bower_components/mousetrap/mousetrap.min.js"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyArYqgfXQNcM6DHNmunrVpS8hGoa0IaIgk&signed_in=true"></script> -->
     <script src="initData.js"></script>
     <script src="controller.js"></script>
     <script src="model.js"></script>

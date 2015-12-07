@@ -9,6 +9,10 @@
 
   .container-fluid { padding:0px;}
 
+  .brand-color {
+    color: #FFE082;
+  }
+
 
 /* Sidebar */
 
@@ -60,10 +64,28 @@
     padding-right: .05em;
   }
 
+  #btn-nav-toggle {
+    background: transparent;
+    border: none;
+  }
+
+  i.fa-caret-square-o-down,
+  .nav-sidebar {
+    -moz-transition: all .50s linear;
+    -webkit-transition: all .50s linear;
+    transition: all .50s linear;
+  }
+
+  .nav>li>a.active {
+    background-color: inherit;
+    color: #FFC107;
+  }
+
   .nav>li>a:focus,
   .nav>li>a:hover {
     background-color: inherit;
     color: #FFC107;
+    outline: none;
   }
 
   a.location-link {
@@ -78,6 +100,16 @@
     padding-right: .5em;
   }
 
+  a#about-link {
+    font-size:2em
+  }
+
+  .nav.nav-sidebar.nav-sidebar-secondary {
+    position:absolute;
+    bottom: 0;
+  }
+
+
 /* Map */
 
   #map-canvas {
@@ -85,13 +117,43 @@
     padding-left:0px;
   }
 
+/* Modal */
+.modal-about > .modal-content {
+  background-color: rgba(0,0,0,0.7);
+  color: rgba(255,255,255,.85);
+  border: none;
+  border-radius: 0px;
+}
 
-/* Mobile Specific Styles */
+.modal-about > .modal-content a {
+  color: rgba(255,255,255,.85);
+  text-decoration: underline;
+}
+
+td.shortcut-key {
+  color: #FFE082;
+  font-weight:600;
+  padding-right:1em;
+}
+
+/* Media Queries */
 
   @media (max-width: 768px) {
     /* Reposition sidebar to top on mobile */
     .sidebar {
       bottom: initial !important;
       width: 100% !important;
+    }
+
+    /* Hide list items by default */
+    #nav-container {
+      display:none;
+    }
+
+  }
+  /* Ensures sidsebar is always visible on non-mobile displays*/
+  @media (min-width: 769px) {
+    #nav-container {
+      display: block !important;
     }
   }
